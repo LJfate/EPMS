@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <!--        用于指定配置别名的包，当指定后，该包下的的实体类都会注册别名，并且类名就是别名，不在区分大小写-->
+<!--<typeAliases>-->
+<!--    <package name="com.lj.domain"/>-->
+<!--</typeAliases>-->
+
+<!--    <plugins>-->
+<!--        &lt;!&ndash; com.github.pagehelper为PageHelper类所在包名 &ndash;&gt;-->
+<!--        <plugin interceptor="com.github.pagehelper.PageInterceptor">-->
+<!--            &lt;!&ndash; 使用下面的方式配置参数，后面会有所有的参数介绍，可以不写参数&ndash;&gt;-->
+<!--            <property name="param1" value="value1"/>-->
+<!--        </plugin>-->
+<!--    </plugins>-->
+
+
+<!--    &lt;!&ndash;配置环境&ndash;&gt;-->
+<!--    <environments default="mysql">-->
+<!--        <environment id="mysql">-->
+<!--            <transactionManager type="JDBC"></transactionManager>-->
+<!--            <dataSource type="POOLED">-->
+<!--                <property name="driver" value="com.mysql.jdbc.Driver"/>-->
+<!--                <property name="url" value="jdbc:mysql://localhost:3306//user_information"/>-->
+<!--                <property name="username" value="root"/>-->
+<!--                <property name="password" value=""/>-->
+<!--            </dataSource>-->
+<!--        </environment>-->
+<!--    </environments>-->
+    <!--指定映射配置文件的位置，映射配置文件指的是每个dao独立的配置文件(在spring配置文件中声明过属性：name=mapperLocations的属性，就不需要了)-->
+    <mappers>
+        <!--使用xml进行查询-->
+<!--        <mapper resource="mapper/User_InfDao.xml"/>-->
+<!--        <mapper resource="mapper/DepartmentDao.xml"/>-->
+<!--        <mapper resource="mapper/EmployeeDao.xml"/>-->
+<!--        <mapper resource="mapper/AttendanceDao.xml"/>-->
+<!--        <mapper resource="mapper/SalaryDao.xml"/>-->
+        <!--使用注解，必须和持久类在同一目录下-->
+        <!--<mapper class="com.dao.UserDao"/>-->
+        <!--扫描mapper下所有注解，必须和持久类在同一目录下-->
+<!--        <package name="com.lj.dao"/>-->
+    </mappers>
+
+
+</configuration>

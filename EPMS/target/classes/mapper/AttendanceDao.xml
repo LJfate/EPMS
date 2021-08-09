@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.dao.AttendanceDao">
+
+<!--<resultMap id="EmpPlusAtt" type="Attendance">-->
+
+<!--    <id property="att_id"               column="att_id"></id>-->
+<!--    <result property="emp_id"           column="emp_id"/>-->
+<!--    <result property="att_year"         column="att_year"></result>-->
+<!--    <result property="att_month"        column="att_month"></result>-->
+<!--    <result property="att_leave_early"  column="att_leave_early"></result>-->
+<!--    <result property="att_late"         column="att_late"></result>-->
+<!--    <result property="att_working_days" column="att_working_days"></result>-->
+<!--    <result property="att_leave_days"   column="att_leave_days"></result>-->
+<!--    <result property="att_intro"        column="att_intro"></result>-->
+
+<!--        &lt;!&ndash;    一对一映射&ndash;&gt;-->
+<!--    <association property="employee" column="emp_id" javaType="employee">-->
+<!--        <id  property="emp_id" column="emp_id"/>-->
+<!--        <result property="dep_id" column="dep_id"/>-->
+<!--        <result property="emp_name" column="emp_name"/>-->
+<!--        <result property="sex" column="sex"/>-->
+<!--        <result property="post" column="post"/>-->
+<!--        <result property="post_title" column="post_title"/>-->
+<!--        <result property="dateintocompany" column="dateintocompany"/>-->
+<!--    </association>-->
+
+<!--</resultMap>-->
+    <resultMap id="EmpPlusAtt" type="Attendance">
+
+        <id property="att_id"               column="att_id"></id>
+        <result property="emp_id"           column="emp_id"/>
+        <result property="att_date"         column="att_date"></result>
+        <result property="att_shangban"        column="att_shangban"></result>
+        <result property="att_xiaban"  column="att_xiaban"></result>
+        <result property="att_type"           column="att_type"/>
+        <result property="att_intro"           column="att_intro"/>
+
+
+        <!--    一对一映射-->
+        <association property="employee" column="emp_id" javaType="employee">
+            <id  property="emp_id" column="emp_id"/>
+            <result property="dep_id" column="dep_id"/>
+            <result property="emp_name" column="emp_name"/>
+            <result property="sex" column="sex"/>
+            <result property="post" column="post"/>
+            <result property="post_title" column="post_title"/>
+            <result property="dateintocompany" column="dateintocompany"/>
+        </association>
+
+    </resultMap>
+    <select id="findAll" resultMap="EmpPlusAtt">
+        select attendance.*,employee.emp_name  from attendance,employee where  employee.emp_id =attendance.emp_id
+        <if test="nameSearch != null and nameSearch !='' ">
+            and employee.emp_name like concat('%',#{nameSearch},'%')
+        </if>
+    </select>
+
+    <select id="findOne"  resultMap="EmpPlusAtt" parameterType="INT">
+      select attendance.*,employee.emp_name from attendance,employee where attendance.att_id=#{aid} and attendance.emp_id=employee.emp_id
+    </select>
+    <select id="findByEmpId"  resultMap="EmpPlusAtt" parameterType="INT">
+      select attendance.*,employee.emp_name from attendance,employee where  attendance.emp_id=#{emp_id} and employee.emp_id=#{emp_id}
+    </select>
+    <insert id="add" parameterType="attendance"  >
+
+        --      配置插入操作后，获取插入数据的id； 属性（对应实体类）        id（表）      结果集类型     命令执行顺序
+        <selectKey keyProperty="att_id" keyColumn="att_id" resultType="int" order="AFTER">
+            select  last_insert_id();
+        </selectKey>
+        insert into attendance(emp_id,att_date,att_shangban,att_xiaban,att_type)
+                 values(#{emp_id},#{att_date},#{att_shangban},#{att_xiaban},#{att_type})
+    </insert>
+    <!-- 删除考勤-->
+    <delete id="deleteById" parameterType="INT">
+       delete  from attendance where att_id=#{id}
+    </delete>
+    <!--更新考勤 -->
+    <update id="update" parameterType="attendance">
+      update attendance set att_date=#{att_date},att_shangban=#{att_shangban},att_xiaban=#{att_xiaban},att_type=${att_type} where att_id=#{att_id}
+    </update>
+</mapper>

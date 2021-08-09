@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.dao.EmployeeDao">
+
+    <resultMap id="EmpPlusDep" type="com.lj.domain.Employee">
+        <id  property="emp_id" column="emp_id"/>
+        <result property="dep_id" column="dep_id"/>
+        <result property="emp_name" column="emp_name"/>
+        <result property="sex" column="sex"/>
+        <result property="post" column="post"/>
+        <result property="login_name" column="login_name"/>
+        <result property="password" column="password"/>
+        <result property="identity_card" column="identity_card" />
+        <result property="education" column="education" />
+        <result property="mobile" column="mobile"/>
+        <result property="birth" column="birth"/>
+        <result property="address" column="address"/>
+        <result property="post_title" column="post_title"/>
+        <result property="dateintocompany" column="dateintocompany"/>
+        <!--一对一关系映射        -->
+        <association property="dep" column="dep_id" javaType="com.lj.domain.Department">
+            <id property="dep_id" column="dep_id"></id>
+            <result property="dep_name" column="dep_name"></result>
+            <result property="dep_intro" column="dep_intro"></result>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultMap="EmpPlusDep" parameterType="String">
+        select employee.*,department.dep_name from employee ,department
+            where  employee.dep_id=department.dep_id
+            <if test=" nameSearch != null and nameSearch != '' ">
+               and  employee.emp_name  like CONCAT('%',#{nameSearch} ,'%')
+            </if>
+    </select>
+
+    <select id="findOne" resultType="employee" parameterType="INT">
+      select * from employee where emp_id=#{eid}
+    </select>
+    <select id="login" resultType="employee"  >
+      select * from employee where login_name=#{login_name} and password=#{password}
+    </select>
+<!--    添加员工-->
+    <insert id="add" parameterType="employee"  >
+        --
+        --      配置插入操作后，获取插入数据的id； 属性（对应实体类）        id（表）      结果集类型     命令执行顺序
+        <selectKey keyProperty="emp_id" keyColumn="emp_id" resultType="int" order="AFTER">
+            select  last_insert_id();
+        </selectKey>
+        insert into employee(emp_id,emp_name,sex,dep_id,post,post_title,dateintocompany,login_name,identity_card,education,mobile,birth,address)
+            values(#{emp_id},#{emp_name},#{sex},#{dep_id},#{post},#{post_title},#{dateintocompany},#{emp_id},#{identity_card},#{education},#{mobile},#{birth},#{address})
+    </insert>
+    <!-- 根据id删除员工-->
+    <delete id="deleteById" parameterType="INT">
+       delete  from employee where emp_id=#{emp_id}
+    </delete>
+    <!--更新员工 -->
+    <update id="update" parameterType="employee">
+      update employee set emp_name=#{emp_name},sex=#{sex},dep_id=#{dep_id},post=#{post},
+      post_title=#{post_title},dateintocompany=#{dateintocompany},identity_card=#{identity_card},education=#{education},mobile=#{mobile},birth=#{birth},address=#{address}
+        where emp_id=#{emp_id}
+    </update>
+    <!--更新员工密码 -->
+    <update id="updatezhanghu" parameterType="employee">
+      update employee set  login_name=#{login_name},password=#{password}
+        where emp_id=#{emp_id}
+    </update>
+</mapper>

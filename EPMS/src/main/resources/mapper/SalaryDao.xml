@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.dao.SalaryDao">
+    <resultMap id="SalPlusEmp" type="salary">
+
+        <id property="id"               column="id"></id>
+        <result property="emp_id"           column="emp_id"/>
+        <result property="sal_year"           column="sal_year"/>
+        <result property="sal_month"           column="sal_month"/>
+        <result property="basic_wages"         column="basic_wages"></result>
+        <result property="subsidies" column="subsidies"></result>
+        <result property="real_wages"        column="real_wages"></result>
+
+        <!--    一对一映射-->
+        <association property="employee" column="emp_id" javaType="employee">
+            <id  property="emp_id" column="emp_id"/>
+            <result property="dep_id" column="dep_id"/>
+            <result property="emp_name" column="emp_name"/>
+            <result property="sex" column="sex"/>
+            <result property="post" column="post"/>
+            <result property="post_title" column="post_title"/>
+            <result property="dateintocompany" column="dateintocompany"/>
+        </association>
+
+    </resultMap>
+
+    <select id="findAll" resultMap="SalPlusEmp">
+        select salary.*,employee.emp_name  from salary,employee where  employee.emp_id =salary.emp_id
+        <if test="nameSearch != null and nameSearch !='' ">
+            and employee.emp_name like concat('%',#{nameSearch},'%')
+        </if>
+    </select>
+
+    <select id="findOne"  resultMap="SalPlusEmp" parameterType="INT">
+      select salary.*,employee.emp_name from salary,employee where salary.id=#{id} and salary.emp_id=employee.emp_id
+    </select>
+    <select id="findByEmpId"  resultMap="SalPlusEmp" parameterType="INT">
+      select salary.*,employee.emp_name from salary,employee where   salary.emp_id=#{emp_id} and employee.emp_id=#{emp_id}
+    </select>
+    <insert id="add" parameterType="salary"  >
+--
+--      配置插入操作后，获取插入数据的id； 属性（对应实体类）        id（表）      结果集类型     命令执行顺序
+                            <selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+                                select  last_insert_id();
+                            </selectKey>
+        insert into salary(emp_id,basic_wages,subsidies,real_wages,sal_year,sal_month )
+            values(#{emp_id},#{basic_wages},#{subsidies},#{real_wages},#{sal_year},#{sal_month} )
+    </insert>
+    <!-- 删除工资信息-->
+    <delete id="deleteById" parameterType="INT">
+       delete  from salary where id=#{id}
+    </delete>
+
+    <!--更新工资信息 -->
+    <update id="update" parameterType="salary">
+      update salary set basic_wages=#{basic_wages},subsidies=#{subsidies},real_wages=#{real_wages},sal_year=#{sal_year},sal_month=#{sal_month} where id=#{id}
+    </update>
+</mapper>

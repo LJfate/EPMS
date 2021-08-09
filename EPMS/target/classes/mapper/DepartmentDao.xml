@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.dao.DepartmentDao">
+<!--  配置实体类属性和数据库表字段的对应关系(若单词一模一样可不用配置)  实体类的属性名和查询的列名一一对应（前提：属性名和列名不一致，使用时，用属性名resultMap替换select字段的resulType）-->
+<!--    <resultMap id="PerPlusDep" type="com.lj.domain.Employee">-->
+<!--        <id  property="dep_id" column="dep_id"/>-->
+<!--        <result property="dep_name" column="dep_name"/>-->
+<!--        <result property="dep_intro" column="dep_intro"/>-->
+<!--        &lt;!&ndash;一对多关系映射      &ndash;&gt;-->
+<!--        <collection property="employees" ofType="employee">-->
+<!--            <id column="aid" property="id"></id>-->
+<!--            <result column="uid" property="uid"></result>-->
+<!--            <result column="money" property="money"></result>-->
+<!--        </collection>-->
+<!--    </resultMap>-->
+    <select id="findAll" resultType="department" >
+        select * from department
+        <where>
+             <if test=" nameSearch1 != null and nameSearch1 !=  '' ">
+                 department.dep_name like  CONCAT('%',#{nameSearch1},'%')
+             </if>
+        </where>
+    </select>
+
+    <select id="findOne" resultType="department" parameterType="INT">
+      select * from department where dep_id=#{did}
+    </select>
+    <!--  添加部门-->
+    <insert id="add" parameterType="department"  >
+        --
+        --      配置插入操作后，获取插入数据的id； 属性（对应实体类）        id（表）      结果集类型     命令执行顺序
+        <selectKey keyProperty="dep_id" keyColumn="dep_id" resultType="int" order="AFTER">
+            select  last_insert_id();
+        </selectKey>
+        insert into department(dep_id,dep_name,dep_intro) values(#{dep_id},#{dep_name},#{dep_intro})
+    </insert>
+    <!-- 删除部门-->
+    <delete id="deleteById" parameterType="INT">
+       delete  from department where dep_id=#{id}
+    </delete>
+    <!--更新部门 -->
+    <update id="update" parameterType="department">
+      update department set dep_name=#{dep_name},dep_intro=#{dep_intro} where dep_id=#{dep_id}
+    </update>
+
+
+
+</mapper>
